@@ -1,18 +1,6 @@
 defmodule ExCurl.Request do
   @moduledoc false
-  use ExCurl.Zig.MultiPlatform,
-    link_libc: true,
-    libs: ["/usr/lib/libcurl.so"],
-    include: ["/usr/include/curl"],
-    platform_opts: [
-      %{
-        platform: {:unix, :darwin},
-        options: [
-          libs: ["/usr/local/opt/curl/lib/libcurl.dylib"],
-          include: ["/usr/local/opt/curl/include/curl"]
-        ]
-      }
-    ]
+  use ExCurl.Zig.MultiPlatformCurl
 
   ~Z"""
   const cURL = @cImport({
