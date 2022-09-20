@@ -24,6 +24,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Install cURL Headers
+      run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev
+
     - uses: erlef/setup-beam@main
       with:
         otp-version: ${{matrix.pair.otp}}
