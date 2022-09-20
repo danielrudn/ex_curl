@@ -1,8 +1,8 @@
 defmodule ExCurl.TestClient do
   @moduledoc """
-  Tests sometimes hang when trying to make a request with ExCurl
-  unless we use dirty_cpu: true. There is a race condition when listening for connections
-  and making requests to lcoalhost simulataneously.
+  There is a race condition when listening for connections
+  and making requests to localhost simulataneously. Setting `dirty_cpu` to `true`
+  will remove the race condition.
   """
   use ExCurl.Client, defaults: [dirty_cpu: true]
 end

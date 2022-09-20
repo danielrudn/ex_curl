@@ -7,11 +7,12 @@ defmodule ExCurl.MixProject do
     [
       app: :ex_curl,
       version: "0.1.0",
-      elixir: "~> 1.14",
+      elixir: "~> 1.11",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      docs: docs()
+      docs: docs(),
+      package: package()
     ]
   end
 
@@ -39,6 +40,15 @@ defmodule ExCurl.MixProject do
       main: "readme",
       source_url: @source_url,
       extras: ["README.md", "LICENSE"]
+    ]
+  end
+
+  defp package do
+    [
+      description: "Elixir bindings for libcurl.",
+      maintainers: ["Daniel Rudnitski"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => @source_url}
     ]
   end
 end
