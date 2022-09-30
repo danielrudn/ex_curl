@@ -28,7 +28,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev
 
     - name: Install Kerberos test dependencies and initialize configuration
-      run: sudo apt-get install -y krb5-user && cp test/support/files/krb5.conf /etc/krb5.conf
+      run: sudo apt-get install -y krb5-user && sudo cp test/support/files/krb5.conf /etc/krb5.conf
 
     - uses: erlef/setup-beam@main
       with:
