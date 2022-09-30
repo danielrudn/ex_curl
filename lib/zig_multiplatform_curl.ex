@@ -1,5 +1,10 @@
 defmodule ExCurl.Zig.MultiPlatformCurl do
-  @moduledoc false
+  @moduledoc """
+  This module wraps the `use Zig` macro to allow multiplatform
+  compilation of Zig code that imports libcurl. The current implementation
+  naively guesses standard libcurl locations based on the `@load_order`
+  module attribute.
+  """
 
   @load_order [
     %{
