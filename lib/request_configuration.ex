@@ -15,7 +15,8 @@ defmodule ExCurl.RequestConfiguration do
         ssl_verifyhost: Keyword.get(opts, :ssl_verifyhost, true),
         ssl_verifypeer: Keyword.get(opts, :ssl_verifypeer, true),
         return_metrics: Keyword.get(opts, :return_metrics, false),
-        verbose: Keyword.get(opts, :verbose, false)
+        verbose: Keyword.get(opts, :verbose, false),
+        http_auth_negotiate: Keyword.get(opts, :http_auth_negotiate, false)
       }
     }
   end

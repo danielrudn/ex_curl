@@ -27,6 +27,9 @@ jobs:
     - name: Install cURL Headers
       run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev
 
+    - name: Install Kerberos test dependencies and initialize configuration
+      run: sudo apt-get install -y krb5-user && cp test/support/files/krb5.conf /etc/krb5.conf
+
     - uses: erlef/setup-beam@main
       with:
         otp-version: ${{matrix.pair.otp}}
@@ -51,9 +54,9 @@ jobs:
     - run: mix compile --warnings-as-errors
       if: ${{ matrix.lint }}
 
-    - run: mix test
+    - run: mix test --include kerberos:true
       if: ${{ ! matrix.lint }}
 
-    - run: mix test --warnings-as-errors
+    - run: mix test --warnings-as-errors --include kerberos:true
       if: ${{ matrix.lint }}
 
