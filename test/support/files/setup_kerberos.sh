@@ -3,8 +3,6 @@
 set -e
 
 export DEBIAN_FRONTEND=noninteractive
-export KERBEROS_USERNAME=${KERBEROS_USERNAME}
-export KERBEROS_PASSWORD=${KERBEROS_PASSWORD}
 export KERBEROS_HOSTNAME=$(cat /etc/hostname)
 export KERBEROS_REALM=$(echo "$KERBEROS_HOSTNAME" | cut -d'.' -f2,3)
 
