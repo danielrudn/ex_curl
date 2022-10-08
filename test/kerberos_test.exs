@@ -12,15 +12,15 @@ defmodule ExCurl.KerberosTest do
     bypass: bypass,
     hostname: hostname
   } do
-    System.cmd("klist", ["-k", "/etc/krb5.keytab"]) |> IO.inspect()
-
     System.cmd("kinit", [
       "-k",
       "-t",
       "/etc/krb5.keytab",
-      "HTTP/#{hostname}"
+      "HTTP/#{hostname}@#{String.upcase(hostname)}"
     ])
     |> IO.inspect()
+
+    System.cmd("klist", ["-k", "/etc/krb5.keytab"]) |> IO.inspect()
 
     Bypass.expect(bypass, "GET", "/test", fn conn ->
       case Plug.Conn.get_req_header(conn, "authorization") do
