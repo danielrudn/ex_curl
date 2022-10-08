@@ -62,10 +62,10 @@ echo "*** Creating principals for tests"
 kadmin.local -q "addprinc -pw $KERBEROS_PASSWORD $KERBEROS_USERNAME"
 
 echo "*** Adding HTTP principal for Kerberos and create keytab"
+kadmin.local -q "addprinc -randkey HTTP/localhost"
+kadmin.local -q "ktadd -k /etc/krb5.keytab HTTP/localhost"
 kadmin.local -q "addprinc -randkey HTTP/$KERBEROS_HOSTNAME"
-kadmin.local -q "addprinc -randkey HTTP/localhost.localdomain"
 kadmin.local -q "ktadd -k /etc/krb5.keytab HTTP/$KERBEROS_HOSTNAME"
-kadmin.local -q "ktadd -k /etc/krb5.keytab HTTP/localhost.localdomain"
 chmod 777 /etc/krb5.keytab
 
 
