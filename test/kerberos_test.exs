@@ -5,7 +5,7 @@ defmodule ExCurl.KerberosTest do
   setup do
     bypass = Bypass.open()
     {:ok, hostname} = :inet.gethostname()
-    {:ok, bypass: bypass, hostname: hostname}
+    {:ok, bypass: bypass, hostname: to_string(hostname)}
   end
 
   test "retries 401s when http_auth_negotiate is enabled and kerberos is configured", %{
@@ -16,7 +16,7 @@ defmodule ExCurl.KerberosTest do
       "-k",
       "-t",
       "/etc/krb5.keytab",
-      "HTTP/#{hostname}@#{String.upcase(to_string(hostname))}"
+      "HTTP/localhost@#{String.upcase(hostname)}"
     ])
     |> IO.inspect()
 
