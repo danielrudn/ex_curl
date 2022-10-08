@@ -32,8 +32,8 @@ jobs:
       - name: Setup Kerberos environment and initialize configuration
         run: sudo ./test/support/files/setup_kerberos.sh
         env:
-          KERBEROS_USERNAME: ${{ secrets.KERBEROS_USERNAME }}
-          KERBEROS_PASSWORD: ${{ secrets.KERBEROS_PASSWORD }}
+          KERBEROS_USERNAME: ${{ env.KERBEROS_USERNAME }}
+          KERBEROS_PASSWORD: ${{ env.KERBEROS_PASSWORD }}
 
       - name: Create Kerberos ticket for test user
         run: |
@@ -41,8 +41,8 @@ jobs:
           echo -n "$KERBEROS_PASSWORD" | kinit "$KERBEROS_USERNAME@${KERBEROS_REALM^^}"
           ls -l /tmp
         env:
-          KERBEROS_USERNAME: ${{ secrets.KERBEROS_USERNAME }}
-          KERBEROS_PASSWORD: ${{ secrets.KERBEROS_PASSWORD }}
+          KERBEROS_USERNAME: ${{ env.KERBEROS_USERNAME }}
+          KERBEROS_PASSWORD: ${{ env.KERBEROS_PASSWORD }}
 
       - uses: erlef/setup-beam@main
         with:
