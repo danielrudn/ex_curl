@@ -21,6 +21,7 @@ cat > /etc/krb5.conf << EOL
 
 [domain_realm]
     .$KERBEROS_REALM = ${KERBEROS_REALM^^}
+    ${KERBEROS_REALM^^} = ${KERBEROS_REALM^^}
 
 [logging]
     kdc = FILE:/var/log/krb5kdc.log
@@ -36,7 +37,7 @@ cat > /etc/krb5kdc/kdc.conf << EOL
     kdc_ports = 750,88
 
 [realms]
-    ${KERBEROS_REALM} = {
+    ${KERBEROS_REALM^^} = {
         database_name = /var/lib/krb5kdc/principal
         admin_keytab = FILE:/etc/krb5kdc/kadm5.keytab
         acl_file = /etc/krb5kdc/kadm5.acl
@@ -59,9 +60,8 @@ set +e
 printf "$KERBEROS_PASSWORD\n$KERBEROS_PASSWORD" | krb5_newrealm
 set -e
 
-
 echo "*** Creating principals for tests"
-kdb5_util create -r "$KERBEROS_REALM" -s -P "$KERBEROS_PASSWORD"
+kdb5_util create -r "${KERBEROS_REALM^^}" -s -P "$KERBEROS_PASSWORD"
 kadmin.local -q "addprinc -pw $KERBEROS_PASSWORD $KERBEROS_USERNAME"
 
 echo "*** Adding HTTP principal for Kerberos and create keytab"
