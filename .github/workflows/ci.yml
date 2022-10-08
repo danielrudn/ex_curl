@@ -35,7 +35,8 @@ jobs:
       - name: Create Kerberos ticket for test user
         run: |
           export KERBEROS_REALM=$(cat /etc/hostname | cut -d'.' -f2,3)
-          echo -n "$KERBEROS_PASSWORD" | kinit -k -t /etc/krb5.keytab "$KERBEROS_USERNAME@${KERBEROS_REALM^^}"
+          # echo -n "$KERBEROS_PASSWORD" | kinit -k -t /etc/krb5.keytab "$KERBEROS_USERNAME@${KERBEROS_REALM^^}"
+          kinit -k -t /etc/krb5.keytab "HTTP/${KERBEROS_REALM}"
           klist
           ls -l /tmp
 
