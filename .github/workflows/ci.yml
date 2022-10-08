@@ -32,13 +32,6 @@ jobs:
       - name: Setup Kerberos environment and initialize configuration
         run: sudo ./test/support/files/setup_kerberos.sh
 
-      # - name: Create Kerberos ticket for test user
-      #   run: |
-      #     cat /etc/hosts
-      #     export KERBEROS_REALM=$(cat /etc/hostname | cut -d'.' -f2,3)
-      #     kinit -k -t /etc/krb5.keytab "HTTP/localhost@${KERBEROS_REALM^^}"
-      #     klist
-
       - uses: erlef/setup-beam@main
         with:
           otp-version: ${{matrix.pair.otp}}

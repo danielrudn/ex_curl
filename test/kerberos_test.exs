@@ -18,9 +18,6 @@ defmodule ExCurl.KerberosTest do
       "/etc/krb5.keytab",
       "HTTP/localhost@#{String.upcase(hostname)}"
     ])
-    |> IO.inspect()
-
-    System.cmd("klist", ["-k", "/etc/krb5.keytab"]) |> IO.inspect()
 
     Bypass.expect(bypass, "GET", "/test", fn conn ->
       case Plug.Conn.get_req_header(conn, "authorization") do
@@ -74,8 +71,6 @@ defmodule ExCurl.KerberosTest do
 
   test "does not retry 401s if http_auth_negotiate is not enabled even if kerberos is configured",
        %{bypass: bypass} do
-    System.cmd("klist", ["-k", "/etc/krb5.keytab"])
-
     Bypass.expect(bypass, "GET", "/test", fn conn ->
       case Plug.Conn.get_req_header(conn, "authorization") do
         ["Negotiate " <> token] ->
