@@ -59,7 +59,6 @@ printf "$KERBEROS_PASSWORD\n$KERBEROS_PASSWORD" | krb5_newrealm
 set -e
 
 echo "*** Creating principals for tests"
-kdb5_util create -r "${KERBEROS_REALM^^}" -s -P "$KERBEROS_PASSWORD"
 kadmin.local -q "addprinc -pw $KERBEROS_PASSWORD $KERBEROS_USERNAME"
 
 echo "*** Adding HTTP principal for Kerberos and create keytab"
