@@ -72,3 +72,5 @@ service krb5-kdc restart
 
 echo "*** Getting ticket for Kerberos user"
 echo -n "$KERBEROS_PASSWORD" | kinit "$KERBEROS_USERNAME@${KERBEROS_REALM^^}"
+klist -k /etc/krb5.keytab
+ls /tmp/
