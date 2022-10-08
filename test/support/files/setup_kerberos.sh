@@ -35,11 +35,11 @@ echo -e "*/*@${KERBEROS_REALM^^}\t*" > /etc/krb5kdc/kadm5.acl
 echo "*** Creating KDC database"
 # krb5_newrealm returns non-0 return code as it is running in a container, ignore it for this command only
 set +e
-kdb5_util create -r "$KERBEROS_REALM" -s -P "$KERBEROS_PASSWORD"
 printf "$KERBEROS_PASSWORD\n$KERBEROS_PASSWORD" | krb5_newrealm
 set -e
 
 echo "*** Creating principals for tests"
+kdb5_util create -r "$KERBEROS_REALM" -s -P "$KERBEROS_PASSWORD"
 kadmin.local -q "addprinc -pw $KERBEROS_PASSWORD $KERBEROS_USERNAME"
 
 echo "*** Adding HTTP principal for Kerberos and create keytab"
