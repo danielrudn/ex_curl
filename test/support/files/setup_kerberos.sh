@@ -29,8 +29,6 @@ cat > /etc/krb5.conf << EOL
     default = FILE:/var/log/krb5lib.log
 EOL
 
-cat /etc/krb5.conf
-
 echo "*** Setup Kerberos ACL configuration at /etc/krb5kdc/kadm5.acl"
 cat > /etc/krb5kdc/kdc.conf << EOL
 [kdcdefaults]
@@ -51,8 +49,6 @@ cat > /etc/krb5kdc/kdc.conf << EOL
     }
 EOL
 echo -e "*/*@${KERBEROS_REALM^^}\t*" > /etc/krb5kdc/kadm5.acl
-cat /etc/krb5kdc/kdc.conf
-
 
 echo "*** Creating KDC database"
 # krb5_newrealm returns non-0 return code as it is running in a container, ignore it for this command only
@@ -74,4 +70,6 @@ echo "*** Restarting Kerberos KDS service"
 service krb5-kdc restart
 
 echo "*** Getting ticket for Kerberos user"
+echo "Kerberos username: $KERBEROS_USERNAME"
+env
 echo -n "$KERBEROS_PASSWORD" | kinit "$KERBEROS_USERNAME@${KERBEROS_REALM^^}"
