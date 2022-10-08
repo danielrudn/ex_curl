@@ -70,5 +70,5 @@ chmod 777 /etc/krb5.keytab
 echo "*** Restarting Kerberos KDS service"
 service krb5-kdc restart
 
-echo "*** Getting ticket for Kerberos user"
-echo -n "$KERBEROS_PASSWORD" | kinit "$KERBEROS_USERNAME@${KERBEROS_REALM^^}"
+# echo "*** Getting ticket for Kerberos user"
+# echo -n "$KERBEROS_PASSWORD" | kinit "$KERBEROS_USERNAME@${KERBEROS_REALM^^}"
