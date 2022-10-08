@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       MIX_ENV: test
+      KERBEROS_USERNAME: admin
+      KERBEROS_PASSWORD: secretpassword
     strategy:
       fail-fast: false
       matrix:
@@ -29,15 +31,18 @@ jobs:
 
       - name: Setup Kerberos environment and initialize configuration
         run: sudo ./test/support/files/setup_kerberos.sh
+        env:
+          KERBEROS_USERNAME: ${{ secrets.KERBEROS_USERNAME }}
+          KERBEROS_PASSWORD: ${{ secrets.KERBEROS_PASSWORD }}
 
       - name: Create Kerberos ticket for test user
-        env:
-          KERBEROS_USERNAME: admin
-          KERBEROS_PASSWORD: secretpassword
         run: |
-          export KERBEROS_REALM=$(echo "$KERBEROS_HOSTNAME" | cut -d'.' -f2,3)
+          export KERBEROS_REALM=$(cat /etc/hostname | cut -d'.' -f2,3)
           echo -n "$KERBEROS_PASSWORD" | kinit "$KERBEROS_USERNAME@${KERBEROS_REALM^^}"
           ls -l /tmp
+        env:
+          KERBEROS_USERNAME: ${{ secrets.KERBEROS_USERNAME }}
+          KERBEROS_PASSWORD: ${{ secrets.KERBEROS_PASSWORD }}
 
       - uses: erlef/setup-beam@main
         with:
