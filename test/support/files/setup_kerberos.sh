@@ -71,6 +71,4 @@ echo "*** Restarting Kerberos KDS service"
 service krb5-kdc restart
 
 echo "*** Getting ticket for Kerberos user"
-echo "Kerberos username: $KERBEROS_USERNAME"
-env
 echo -n "$KERBEROS_PASSWORD" | kinit "$KERBEROS_USERNAME@${KERBEROS_REALM^^}"
