@@ -4,19 +4,21 @@ defmodule ExCurl.KerberosTest do
 
   setup do
     bypass = Bypass.open()
-    {:ok, bypass: bypass}
+    {:ok, hostname} = :inet.gethostname()
+    {:ok, bypass: bypass, hostname: hostname}
   end
 
   test "retries 401s when http_auth_negotiate is enabled and kerberos is configured", %{
-    bypass: bypass
+    bypass: bypass,
+    hostname: hostname
   } do
-    System.cmd("klist", ["-k", "test/support/files/krb5.keytab"])
+    System.cmd("klist", ["-k", "/etc/krb5.keytab"])
 
     System.cmd("kinit", [
       "-k",
       "-t",
-      "test/support/files/krb5.keytab",
-      "HTTP/localhost@EXAMPLE.COM"
+      "/etc/krb5.keytab",
+      "HTTP/#{hostname}"
     ])
 
     Bypass.expect(bypass, "GET", "/test", fn conn ->
@@ -71,7 +73,7 @@ defmodule ExCurl.KerberosTest do
 
   test "does not retry 401s if http_auth_negotiate is not enabled even if kerberos is configured",
        %{bypass: bypass} do
-    System.cmd("klist", ["-k", "test/support/files/krb5.keytab"])
+    System.cmd("klist", ["-k", "/etc/krb5.keytab"])
 
     Bypass.expect(bypass, "GET", "/test", fn conn ->
       case Plug.Conn.get_req_header(conn, "authorization") do
