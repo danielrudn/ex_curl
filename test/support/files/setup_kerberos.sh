@@ -29,7 +29,6 @@ cat > /etc/krb5.conf << EOL
 EOL
 
 echo "Setup Kerberos ACL configuration at /etc/krb5kdc/kadm5.acl"
-mkdir /etc/krb5kdc
 echo -e "*/*@${KERBEROS_REALM^^}\t*" > /etc/krb5kdc/kadm5.acl
 
 
