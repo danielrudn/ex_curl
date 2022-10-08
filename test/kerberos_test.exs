@@ -16,7 +16,7 @@ defmodule ExCurl.KerberosTest do
       "-k",
       "-t",
       "/etc/krb5.keytab",
-      "HTTP/#{hostname}@#{String.upcase(hostname)}"
+      "HTTP/#{hostname}@#{String.upcase(to_string(hostname))}"
     ])
     |> IO.inspect()
 
