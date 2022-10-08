@@ -31,9 +31,27 @@ EOL
 cat /etc/krb5.conf
 
 echo "*** Setup Kerberos ACL configuration at /etc/krb5kdc/kadm5.acl"
-echo -e "*/*@${KERBEROS_REALM^^}\t*" > /etc/krb5kdc/kadm5.acl
+cat > /etc/krb5kdc/kdc.conf << EOL
+[kdcdefaults]
+    kdc_ports = 750,88
 
+[realms]
+    ${KERBEROS_REALM} = {
+        database_name = /var/lib/krb5kdc/principal
+        admin_keytab = FILE:/etc/krb5kdc/kadm5.keytab
+        acl_file = /etc/krb5kdc/kadm5.acl
+        key_stash_file = /etc/krb5kdc/stash
+        kdc_ports = 750,88
+        max_life = 10h 0m 0s
+        max_renewable_life = 7d 0h 0m 0s
+        master_key_type = des3-hmac-sha1
+        #supported_enctypes = aes256-cts:normal aes128-cts:normal
+        default_principal_flags = +preauth
+    }
+EOL
+echo -e "*/*@${KERBEROS_REALM^^}\t*" > /etc/krb5kdc/kadm5.acl
 cat /etc/krb5kdc/kdc.conf
+
 
 echo "*** Creating KDC database"
 # krb5_newrealm returns non-0 return code as it is running in a container, ignore it for this command only
