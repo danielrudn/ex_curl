@@ -31,7 +31,7 @@ jobs:
         run: sudo apt-get install -y krb5-{user,kdc,admin-server}
 
       - name: Setup Kerberos environment and initialize configuration
-        run: >-
+        run: |
           sudo ./test/support/files/setup_kerberos.sh
           echo -n "$KERBEROS_PASSWORD" | kinit "$KERBEROS_USERNAME@${KERBEROS_REALM^^}"
           ls -l /tmp
