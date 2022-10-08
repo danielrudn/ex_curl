@@ -35,7 +35,7 @@ jobs:
       - name: Create Kerberos ticket for test user
         run: |
           export KERBEROS_REALM=$(cat /etc/hostname | cut -d'.' -f2,3)
-          kinit -k -t /etc/krb5.keytab "HTTP/localhost.localdomain@${KERBEROS_REALM}"
+          kinit -k -t /etc/krb5.keytab "HTTP/localhost.localdomain@${KERBEROS_REALM^^}"
           klist
 
       - uses: erlef/setup-beam@main
