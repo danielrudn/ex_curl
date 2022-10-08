@@ -28,15 +28,19 @@ cat > /etc/krb5.conf << EOL
     default = FILE:/var/log/krb5lib.log
 EOL
 
+cat /etc/krb5.conf
+
 echo "*** Setup Kerberos ACL configuration at /etc/krb5kdc/kadm5.acl"
 echo -e "*/*@${KERBEROS_REALM^^}\t*" > /etc/krb5kdc/kadm5.acl
 
+cat /etc/krb5kdc/kdc.conf
 
 echo "*** Creating KDC database"
 # krb5_newrealm returns non-0 return code as it is running in a container, ignore it for this command only
 set +e
 printf "$KERBEROS_PASSWORD\n$KERBEROS_PASSWORD" | krb5_newrealm
 set -e
+
 
 echo "*** Creating principals for tests"
 kdb5_util create -r "$KERBEROS_REALM" -s -P "$KERBEROS_PASSWORD"
