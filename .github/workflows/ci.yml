@@ -10,8 +10,6 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       MIX_ENV: test
-      KERBEROS_USERNAME: admin
-      KERBEROS_PASSWORD: password
     strategy:
       fail-fast: false
       matrix:
