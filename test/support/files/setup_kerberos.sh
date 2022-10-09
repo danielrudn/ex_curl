@@ -66,7 +66,6 @@ kadmin.local -q "addprinc -randkey HTTP/localhost"
 kadmin.local -q "ktadd -k /etc/krb5.keytab HTTP/localhost"
 chmod 777 /etc/krb5.keytab
 
-
 echo "*** Restarting Kerberos KDS service"
 service krb5-kdc restart
 
