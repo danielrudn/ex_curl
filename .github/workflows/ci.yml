@@ -14,49 +14,48 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - pair:
-            elixir: "1.11.4"
-            otp: "23.0"
-        - pair:
-            elixir: "1.14"
-            otp: "25.0"
-          lint: lint
+          - pair:
+              elixir: "1.11.4"
+              otp: "23.0"
+          - pair:
+              elixir: "1.14"
+              otp: "25.0"
+            lint: lint
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Install cURL Headers
-      run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev
+      - name: Install test dependencies
+        run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev krb5-{user,kdc,admin-server}
 
-    - name: Install Kerberos test dependencies and initialize configuration
-      run: sudo apt-get install -y krb5-user && sudo cp test/support/files/krb5.conf /etc/krb5.conf
+      - name: Setup Kerberos environment and initialize configuration
+        run: sudo ./test/support/files/setup_kerberos.sh
 
-    - uses: erlef/setup-beam@main
-      with:
-        otp-version: ${{matrix.pair.otp}}
-        elixir-version: ${{matrix.pair.elixir}}
-        version-type: strict
+      - uses: erlef/setup-beam@main
+        with:
+          otp-version: ${{matrix.pair.otp}}
+          elixir-version: ${{matrix.pair.elixir}}
+          version-type: strict
 
-    - uses: actions/cache@v2
-      with:
-        path: deps
-        key: mix-deps-${{ hashFiles('**/mix.lock') }}
+      - uses: actions/cache@v2
+        with:
+          path: deps
+          key: mix-deps-${{ hashFiles('**/mix.lock') }}
 
-    - run: mix deps.get
+      - run: mix deps.get
 
-    - run: mix format --check-formatted
-      if: ${{ matrix.lint }}
+      - run: mix format --check-formatted
+        if: ${{ matrix.lint }}
 
-    - run: mix deps.unlock --check-unused
-      if: ${{ matrix.lint }}
+      - run: mix deps.unlock --check-unused
+        if: ${{ matrix.lint }}
 
-    - run: mix deps.compile
+      - run: mix deps.compile
 
-    - run: mix compile --warnings-as-errors
-      if: ${{ matrix.lint }}
+      - run: mix compile --warnings-as-errors
+        if: ${{ matrix.lint }}
 
-    - run: mix test --include kerberos:true
-      if: ${{ ! matrix.lint }}
+      - run: mix test --include kerberos:true
+        if: ${{ ! matrix.lint }}
 
-    - run: mix test --warnings-as-errors --include kerberos:true
-      if: ${{ matrix.lint }}
-
+      - run: mix test --warnings-as-errors --include kerberos:true
+        if: ${{ matrix.lint }}
