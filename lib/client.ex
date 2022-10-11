@@ -47,7 +47,7 @@ defmodule ExCurl.Client do
   ```
 
   ## Options
-  All of the [Shared Options](https://hexdocs.pm/ex_curl/ExCurl.html#module-shared-options) from ExCurl are available. There are also the follow additional options:
+  All of the [Shared Options](https://hexdocs.pm/ex_curl/ExCurl.html#module-shared-options) from ExCurl are available. There are also the following additional options:
 
   * `base_url` - The base URL used for all requests by this client module
   """
