@@ -18,6 +18,7 @@ defmodule ExCurl.Request do
     ssl_verifypeer: bool,
     return_metrics: bool,
     verbose: bool,
+    http_auth_negotiate: bool,
   };
 
   const RequestConfiguration = struct {
@@ -198,6 +199,15 @@ defmodule ExCurl.Request do
         unreachable;
     } else {
       if (cURL.curl_easy_setopt(handle, @bitCast(c_uint, cURL.CURLOPT_SSL_VERIFYHOST), @as(c_long, 0)) != cURL.CURLE_OK)
+        unreachable;
+    }
+
+    // Set options to support RFC 4559 for SPNEGO-based Kerberos authentication
+    // when this flag is enabled
+    if (config.flags.http_auth_negotiate) {
+      if (cURL.curl_easy_setopt(handle, @bitCast(c_uint, cURL.CURLOPT_HTTPAUTH), cURL.CURLAUTH_NEGOTIATE) != cURL.CURLE_OK)
+        unreachable;
+      if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_USERPWD, ":") != cURL.CURLE_OK)
         unreachable;
     }
 

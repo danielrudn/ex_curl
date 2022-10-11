@@ -11,6 +11,8 @@ defmodule ExCurl do
     * `:ssl_verifypeer` - if SSL certificates should be verified, defaults to `true`
     * `:return_metrics` - if request timing metrics should be included in the returned results, defaults to `false`
     * `:verbose` - if curl should output verbose logs to stdout, useful for debugging. Defaults to `false`
+    * `:http_auth_negotiate` - if curl should use HTTP Negotiation (SPNEGO) as defined in [RFC 4559](https://datatracker.ietf.org/doc/html/rfc4559).
+      Note: this flag requires curl to be compiled with a suitable GSS-API or SSPI library. Defaults to `false`
 
   ## Error messages
 
