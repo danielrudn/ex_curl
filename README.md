@@ -60,7 +60,7 @@ The package can be installed by adding `ex_curl` to your list of dependencies in
 ```elixir
 def deps do
   [
-    {:ex_curl, "~> 0.1.0"}
+    {:ex_curl, "~> 0.2.0"}
   ]
 end
 ```

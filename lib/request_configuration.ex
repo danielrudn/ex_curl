@@ -24,7 +24,7 @@ defmodule ExCurl.RequestConfiguration do
   defp get_headers(opts) do
     opts
     |> Keyword.get(:headers, %{})
-    |> add_header_if_not_exists("user-agent", "ex_curl/0.1.0")
+    |> add_header_if_not_exists("user-agent", "ex_curl/0.2.0")
   end
 
   defp add_header_if_not_exists(headers, key, value) do
