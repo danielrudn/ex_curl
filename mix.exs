@@ -6,7 +6,7 @@ defmodule ExCurl.MixProject do
   def project do
     [
       app: :ex_curl,
-      version: "0.2.0",
+      version: "0.2.1",
       elixir: "~> 1.11",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -29,6 +29,7 @@ defmodule ExCurl.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:ex_doc, "0.29.0", override: true},
       {:zigler, "~> 0.9.1", runtime: false},
       {:jason, ">= 1.0.0"},
       {:bypass, "~> 2.0", only: :test}

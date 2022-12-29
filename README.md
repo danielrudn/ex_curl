@@ -2,6 +2,26 @@
 
 Elixir bindings for libcurl using Zig's C interoperability.
 
+## Installation
+
+The package can be installed by adding `ex_curl` to your list of dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [
+    {:ex_curl, "~> 0.2.1"}
+  ]
+end
+```
+
+To install `ex_curl` in a Livebook, you can use `Mix.install/2`:
+
+```elixir
+Mix.install([
+  {:ex_curl, "~> 0.2.1"}
+])
+```
+
 ## Usage
 
 ```elixir
@@ -52,18 +72,6 @@ GitHubClient.user_repos("danielrudn")
 ```
 
 More examples and details on using `ExCurl.Client` are available on the [ExCurl.Client module documentation page](https://hexdocs.pm/ex_curl/ExCurl.Client.html).
-
-## Installation
-
-The package can be installed by adding `ex_curl` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:ex_curl, "~> 0.2.0"}
-  ]
-end
-```
 
 ## Documentation
 
