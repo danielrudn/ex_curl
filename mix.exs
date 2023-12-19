@@ -30,8 +30,7 @@ defmodule ExCurl.MixProject do
   defp deps do
     [
       {:ex_doc, "0.29.0"},
-      {:zigler, "~> 0.9.1", runtime: false},
-      {:jason, ">= 1.0.0"},
+      {:zigler, "~> 0.11.0", runtime: false},
       {:bypass, "~> 2.0", only: :test}
     ]
   end
