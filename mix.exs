@@ -7,7 +7,7 @@ defmodule ExCurl.MixProject do
     [
       app: :ex_curl,
       version: "0.3.0",
-      elixir: "~> 1.11",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
