@@ -2,7 +2,7 @@ defmodule ExCurl.Request do
   @moduledoc false
   use Zig,
     otp_app: :ex_curl,
-    link_lib: {:system, "libcurl"},
+    link_lib: {:system, "curl"},
     nifs: [request: [], request_dirty_cpu: [:dirty_cpu]]
 
   ~Z"""

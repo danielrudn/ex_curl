@@ -12,7 +12,8 @@ defmodule ExCurl.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
-      package: package()
+      package: package(),
+      aliases: aliases()
     ]
   end
 
@@ -49,6 +50,12 @@ defmodule ExCurl.MixProject do
       maintainers: ["Daniel Rudnitski"],
       licenses: ["MIT"],
       links: %{"GitHub" => @source_url}
+    ]
+  end
+
+  defp aliases do
+    [
+      compile: ["zig.get", "compile"]
     ]
   end
 end
