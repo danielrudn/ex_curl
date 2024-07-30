@@ -2,7 +2,7 @@ defmodule ExCurl.Request do
   @moduledoc false
   use Zig,
     otp_app: :ex_curl,
-    link_lib: {:system, "curl"},
+    c: [link_lib: {:system, "curl"}],
     nifs: [request: [], request_dirty_cpu: [:dirty_cpu]]
 
   ~Z"""
@@ -34,18 +34,18 @@ defmodule ExCurl.Request do
     flags: RequestFlags,
   };
 
-  pub fn request_dirty_cpu(env: beam.env, config: RequestConfiguration) !beam.term {
-    return request(env, config);
+  pub fn request_dirty_cpu(config: RequestConfiguration) !beam.term {
+    return request(config);
   }
 
-  pub fn request(env: beam.env, config: RequestConfiguration) !beam.term {
+  pub fn request(config: RequestConfiguration) !beam.term {
     // initialize curl and vars
     var arena_state = std.heap.ArenaAllocator.init(std.heap.c_allocator);
     defer arena_state.deinit();
 
     const allocator = arena_state.allocator();
 
-    const handle = cURL.curl_easy_init() orelse return beam.make_error_pair(env, "init_failed", .{});
+    const handle = cURL.curl_easy_init() orelse return beam.make_error_pair("init_failed", .{});
     defer cURL.curl_easy_cleanup(handle);
 
     var response_buffer = std.ArrayList(u8).init(allocator);
@@ -62,7 +62,7 @@ defmodule ExCurl.Request do
     var header_slist: [*c]cURL.curl_slist = null;
     defer cURL.curl_slist_free_all(header_slist);
     for (config.headers) |header| {
-      var buf = try allocator.alloc(u8, header.key.len + 3 + header.value.len);
+      const buf = try allocator.alloc(u8, header.key.len + 3 + header.value.len);
       _ = try std.fmt.bufPrint(buf, "{s}: {s}\x00", .{ header.key, header.value });
       header_slist = cURL.curl_slist_append(header_slist, buf.ptr);
       allocator.free(buf);
@@ -93,55 +93,55 @@ defmodule ExCurl.Request do
     }
 
     // 3. perform request
-    var result = cURL.curl_easy_perform(handle);
+    const result = cURL.curl_easy_perform(handle);
     if (result != cURL.CURLE_OK)
-      return beam.make_error_pair(env, result, .{});
+      return beam.make_error_pair(result, .{});
 
     // 4. getinfo and create response
-    var response_list = try makeKeywordListResponse(env, handle, response_buffer, headers_buffer, config);
-    var ok = beam.make_into_atom(env, "ok");
-    return beam.make(env, .{ok, response_list}, .{});
+    const response_list = try makeKeywordListResponse(handle, response_buffer, headers_buffer, config);
+    const ok = beam.make_into_atom("ok", .{});
+    return beam.make(.{ok, response_list}, .{});
   }
 
-  fn makeKeywordListResponse(env: beam.env, handle: *cURL.CURL, response_buffer: std.ArrayList(u8), headers_buffer: std.ArrayList(u8), config: RequestConfiguration) !beam.term {
+  fn makeKeywordListResponse(handle: *cURL.CURL, response_buffer: std.ArrayList(u8), headers_buffer: std.ArrayList(u8), config: RequestConfiguration) !beam.term {
     // metrics
     var total_time: f64 = 0;
     if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_TOTAL_TIME_T, &total_time) != cURL.CURLE_OK)
       return error.CURLGETINFO_FAILED;
-    var total_time_tuple = beam.make(env, .{.total_time, total_time}, .{});
+    const total_time_tuple = beam.make(.{.total_time, total_time}, .{});
 
     var namelookup_time: f64 = 0;
     if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_NAMELOOKUP_TIME_T, &namelookup_time) != cURL.CURLE_OK)
       return error.CURLGETINFO_FAILED;
-    var name_lookup_tuple = beam.make(env, .{.namelookup_time, namelookup_time}, .{});
+    const name_lookup_tuple = beam.make(.{.namelookup_time, namelookup_time}, .{});
 
     var connect_time: f64 = 0;
     if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_CONNECT_TIME_T, &connect_time) != cURL.CURLE_OK)
       return error.CURLGETINFO_FAILED;
-    var connect_time_tuple = beam.make(env, .{.connect_time, connect_time}, .{});
+    const connect_time_tuple = beam.make(.{.connect_time, connect_time}, .{});
 
     var appconnect_time: f64 = 0;
     if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_APPCONNECT_TIME_T, &appconnect_time) != cURL.CURLE_OK)
       return error.CURLGETINFO_FAILED;
-    var appconnect_time_tuple = beam.make(env, .{.appconnect_time, appconnect_time}, .{});
+    const appconnect_time_tuple = beam.make(.{.appconnect_time, appconnect_time}, .{});
 
     var pretransfer_time: f64 = 0;
     if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_PRETRANSFER_TIME_T, &pretransfer_time) != cURL.CURLE_OK)
       return error.CURLGETINFO_FAILED;
-    var pretransfer_time_tuple = beam.make(env, .{.pretransfer_time, pretransfer_time}, .{});
+    const pretransfer_time_tuple = beam.make(.{.pretransfer_time, pretransfer_time}, .{});
 
     var starttransfer_time: f64 = 0;
     if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_STARTTRANSFER_TIME_T, &starttransfer_time) != cURL.CURLE_OK)
       return error.CURLGETINFO_FAILED;
-    var starttransfer_time_tuple = beam.make(env, .{.starttransfer_time, starttransfer_time}, .{});
+    const starttransfer_time_tuple = beam.make(.{.starttransfer_time, starttransfer_time}, .{});
 
     var status_code: u64 = 0;
     if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_RESPONSE_CODE, &status_code) != cURL.CURLE_OK)
       return error.CURLGETINFO_FAILED;
-    var status_code_tuple = beam.make(env, .{.status_code, status_code}, .{});
+    const status_code_tuple = beam.make(.{.status_code, status_code}, .{});
 
-    var response_body_tuple = beam.make(env, .{.body, response_buffer.items}, .{});
-    var headers_tuple = beam.make(env, .{.headers, headers_buffer.items}, .{});
+    const response_body_tuple = beam.make(.{.body, response_buffer.items}, .{});
+    const headers_tuple = beam.make(.{.headers, headers_buffer.items}, .{});
 
     // response list
     var response_tuple_slice: []beam.term = undefined;
@@ -155,7 +155,7 @@ defmodule ExCurl.Request do
       response_tuple_slice[5] = pretransfer_time_tuple;
       response_tuple_slice[6] = starttransfer_time_tuple;
       response_tuple_slice[7] = status_code_tuple;
-      response_tuple_slice[8] = beam.make(env, .{.metrics_returned, true}, .{});
+      response_tuple_slice[8] = beam.make(.{.metrics_returned, true}, .{});
       response_tuple_slice[9] = headers_tuple;
     } else {
       response_tuple_slice = try beam.allocator.alloc(beam.term, 3);
@@ -165,7 +165,7 @@ defmodule ExCurl.Request do
     }
     defer beam.allocator.free(response_tuple_slice);
 
-    return beam.make(env, response_tuple_slice, .{});
+    return beam.make(response_tuple_slice, .{});
   }
 
   fn setCurlOpts(allocator: std.mem.Allocator, handle: *cURL.CURL, config: RequestConfiguration) !void {
@@ -209,28 +209,30 @@ defmodule ExCurl.Request do
       if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_POST, @as(c_long, 1)) != cURL.CURLE_OK)
         unreachable;
     } else if (!std.mem.eql(u8, config.method, "GET")) {
-      var method_as_c_string = allocator.dupeZ(u8, config.method) catch unreachable;
+      const method_as_c_string = allocator.dupeZ(u8, config.method) catch unreachable;
       defer allocator.free(method_as_c_string);
       if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_CUSTOMREQUEST, method_as_c_string.ptr) != cURL.CURLE_OK)
         unreachable;
     }
 
     // URL
-    var url_as_c_string = allocator.dupeZ(u8, config.url) catch unreachable;
+    const url_as_c_string = allocator.dupeZ(u8, config.url) catch unreachable;
     defer allocator.free(url_as_c_string);
     if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_URL, url_as_c_string.ptr) != cURL.CURLE_OK)
       unreachable;
   }
 
-  fn readFn(dest: [*]u8, size: usize, nmemb: usize, config: *RequestConfiguration) usize {
+  fn readFn(dest: [*c]u8, size: usize, nmemb: usize, config: *RequestConfiguration) callconv(.C) usize {
     const bufferSize = size * nmemb;
-    if (config.body.len > 0) {
-      const n = @min(config.body.len, bufferSize);
-      std.mem.copy(u8, dest[0..n], config.body[0..n]);
-      config.body = config.body[n..];
-      return n;
+
+    if (config.body.len == 0) {
+      return 0; // nothing to read
     }
-    return 0;
+
+    const n = @min(config.body.len, bufferSize);
+    std.mem.copyForwards(u8, dest[0..n], config.body[0..n]);
+    config.body = config.body[n..];
+    return n;
   }
 
   fn writeToArrayListCallback(data: *anyopaque, size: c_uint, nmemb: c_uint, user_data: *anyopaque) callconv(.C) c_uint {
