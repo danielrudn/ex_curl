@@ -29,7 +29,7 @@ defmodule ExCurl.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ex_doc, "0.31.0", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.34", only: :dev, runtime: false},
       {:zigler, git: "https://github.com/e-xyza/zigler.git", branch: "0.12.x", runtime: false},
       {:bypass, "~> 2.0", only: :test}
     ]
