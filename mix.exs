@@ -12,8 +12,7 @@ defmodule ExCurl.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
-      package: package(),
-      aliases: aliases()
+      package: package()
     ]
   end
 
@@ -31,7 +30,7 @@ defmodule ExCurl.MixProject do
   defp deps do
     [
       {:ex_doc, "0.31.0", only: :dev, runtime: false},
-      {:zigler, "~> 0.11.0", runtime: false},
+      {:zigler, git: "https://github.com/e-xyza/zigler.git", branch: "0.12.x", runtime: false},
       {:bypass, "~> 2.0", only: :test}
     ]
   end
@@ -50,12 +49,6 @@ defmodule ExCurl.MixProject do
       maintainers: ["Daniel Rudnitski"],
       licenses: ["MIT"],
       links: %{"GitHub" => @source_url}
-    ]
-  end
-
-  defp aliases do
-    [
-      compile: ["zig.get", "compile"]
     ]
   end
 end
