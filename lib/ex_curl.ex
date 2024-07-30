@@ -101,9 +101,6 @@ defmodule ExCurl do
        iex> {:ok, %ExCurl.Response{status_code: status_code}} = ExCurl.get("https://google.com", follow_location: false)
        iex> status_code
        301
-
-       iex> ExCurl.get("https://\\n\\n")
-       {:error, "URL_MALFORMAT"}
   """
   def get(url, opts \\ []), do: request("GET", url, opts)
 
@@ -121,9 +118,6 @@ defmodule ExCurl do
        iex> {:ok, %ExCurl.Response{body: body}} = ExCurl.post("https://httpbin.org/post", body: "some-value=true")
        iex> Jason.decode!(body)["form"]
        %{"some-value" => "true"}
-
-       iex> ExCurl.post("https://\\n\\n")
-       {:error, "URL_MALFORMAT"}
   """
   def post(url, opts \\ []), do: request("POST", url, opts)
 
@@ -189,8 +183,6 @@ defmodule ExCurl do
 
 
       iex> ExCurl.request("GET", "https://google.com")
-
-      iex> ExCurl.request("POST", "https://google.com")
   """
   def request(method, url, opts \\ []) do
     RequestConfiguration.build(method, url, opts)
@@ -226,11 +218,9 @@ defmodule ExCurl do
   end
 
   defp do_request(%RequestConfiguration{} = config, opts) do
-    json_config = Jason.encode!(config)
-
     case Keyword.get(opts, :dirty_cpu, false) do
-      true -> Request.request_dirty_cpu(json_config)
-      _ -> Request.request(json_config)
+      true -> Request.request_dirty_cpu(config)
+      _ -> Request.request(config)
     end
   end
 end

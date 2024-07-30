@@ -9,7 +9,7 @@ The package can be installed by adding `ex_curl` to your list of dependencies in
 ```elixir
 def deps do
   [
-    {:ex_curl, "~> 0.2.1"}
+    {:ex_curl, "~> 0.3.0"}
   ]
 end
 ```
@@ -18,7 +18,7 @@ To install `ex_curl` in a Livebook, you can use `Mix.install/2`:
 
 ```elixir
 Mix.install([
-  {:ex_curl, "~> 0.2.1"}
+  {:ex_curl, "~> 0.3.0"}
 ])
 ```
 

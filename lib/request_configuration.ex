@@ -22,7 +22,7 @@ defmodule ExCurl.RequestConfiguration do
   end
 
   defp get_headers(opts) do
-    add_header_if_not_exists(opts[:headers] || %{}, "user-agent", "ex_curl/0.2.1")
+    add_header_if_not_exists(opts[:headers] || %{}, "user-agent", "ex_curl/0.3.0")
   end
 
   defp add_header_if_not_exists(headers, key, value) do

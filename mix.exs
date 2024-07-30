@@ -6,13 +6,14 @@ defmodule ExCurl.MixProject do
   def project do
     [
       app: :ex_curl,
-      version: "0.2.1",
-      elixir: "~> 1.11",
+      version: "0.3.0",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
-      package: package()
+      package: package(),
+      aliases: aliases()
     ]
   end
 
@@ -29,9 +30,8 @@ defmodule ExCurl.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ex_doc, "0.29.0"},
-      {:zigler, "~> 0.9.1", runtime: false},
-      {:jason, ">= 1.0.0"},
+      {:ex_doc, "0.31.0", only: :dev, runtime: false},
+      {:zigler, "~> 0.11.0", runtime: false},
       {:bypass, "~> 2.0", only: :test}
     ]
   end
@@ -50,6 +50,12 @@ defmodule ExCurl.MixProject do
       maintainers: ["Daniel Rudnitski"],
       licenses: ["MIT"],
       links: %{"GitHub" => @source_url}
+    ]
+  end
+
+  defp aliases do
+    [
+      compile: ["zig.get", "compile"]
     ]
   end
 end
