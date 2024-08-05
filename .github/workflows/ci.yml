@@ -18,13 +18,16 @@ jobs:
           - pair:
               elixir: "1.14"
               otp: "25.3"
+              zig: "0.12.0"
           - pair:
               elixir: "1.17.2-otp-27"
               otp: "27.0.1"
+              zig: "0.12.0"
     steps:
       - uses: actions/checkout@v4
       - name: Generate .tool-versions file
         run: |
+          echo "zig ${{ matrix.pair.zig }}" >> .tool-versions
           echo "elixir ${{ matrix.pair.elixir }}" >> .tool-versions
           echo "erlang ${{ matrix.pair.otp }}" >> .tool-versions
           cat .tool-versions
@@ -32,8 +35,6 @@ jobs:
       - name: Install Hex package manager
         run: mix local.hex --force && mix local.rebar --force
       - run: mix deps.get
-      - name: Install Zig
-        run: mix zig.get
       - uses: actions/cache@v4
         with:
           path: |
