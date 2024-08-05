@@ -5,11 +5,36 @@ on:
     branches:
       - master
 
+env:
+  MIX_ENV: test
+
 jobs:
-  ci:
-    runs-on: ubuntu-20.04
-    env:
-      MIX_ENV: test
+  ci-macos:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - pair:
+              elixir: "1.14"
+              otp: "25.3"
+          - pair:
+              elixir: "1.17"
+              otp: "27.0"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate .tool-versions file
+        run: |
+          echo "elixir ${{ matrix.pair.elixir }}" >> .tool-versions
+          echo "erlang ${{ matrix.pair.otp }}" >> .tool-versions
+          cat .tool-versions
+      - uses: asdf-vm/actions/install@v3
+      - name: Install Hex package manager
+        run: mix local.hex --force
+      - run: mix deps.get
+      - run: mix test
+  ci-ubuntu:
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
