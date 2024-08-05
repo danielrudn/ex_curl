@@ -30,8 +30,14 @@ jobs:
           cat .tool-versions
       - uses: asdf-vm/actions/install@v3
       - name: Install Hex package manager
-        run: mix local.hex --force
+        run: mix local.hex --force && mix local.rebar --force
       - run: mix deps.get
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.asdf
+            deps
+          key: mix-deps-${{ hashFiles('**/mix.lock') }}-${{ matrix.pair.elixir }}-${{ matrix.pair.otp }}
       - run: mix test
   ci-ubuntu:
     runs-on: ubuntu-latest
