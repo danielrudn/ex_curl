@@ -18,6 +18,7 @@
   "protoss": {:hex, :protoss, "0.2.0", "6034f32fe971e03ecb6a1de2963a0c3523e3b42052f3c402f4812eef64887546", [:mix], [], "hexpm", "b1a6b64ada8f3d13d8e66f8eafb2c56b7080c04095de8e3097bfbaa99818aee7"},
   "ranch": {:hex, :ranch, "1.8.0", "8c7a100a139fd57f17327b6413e4167ac559fbc04ca7448e9be9057311597a1d", [:make, :rebar3], [], "hexpm", "49fbcfd3682fab1f5d109351b61257676da1a2fdbe295904176d5e521a2ddfe5"},
   "telemetry": {:hex, :telemetry, "1.1.0", "a589817034a27eab11144ad24d5c0f9fab1f58173274b1e9bae7074af9cbee51", [:rebar3], [], "hexpm", "b727b2a1f75614774cff2d7565b64d0dfa5bd52ba517f16543e6fc7efcc0df48"},
+  "zig_get": {:hex, :zig_get, "0.12.1", "2357fa498c17f526d68f2c25974878a729f8bc204c7ef43780fa59eadf7597fe", [:mix], [{:jason, "~> 1.4", [hex: :jason, repo: "hexpm", optional: false]}], "hexpm", "ba2b5c4cd4f59d4ac90b0475449d04b2c0543313a021257582973d5b0e5f7eba"},
   "zig_parser": {:hex, :zig_parser, "0.4.0", "5230576fcea30c061f08f6053448ad3dc5194a45485065564a7f8047bb351ce9", [:mix], [{:pegasus, "~> 0.2.4", [hex: :pegasus, repo: "hexpm", optional: false]}], "hexpm", "ec54cf14e80a1485e29a80b42756d0421426db81eb9e2630721fd46ab5c21bcb"},
-  "zigler": {:git, "https://github.com/e-xyza/zigler.git", "142cd71a385aa8fd336ff51530cdf4f876f0a1b8", [branch: "0.12.x"]},
+  "zigler": {:git, "https://github.com/e-xyza/zigler.git", "43fd6b944b67c67850fb3872138b23a247d9dd9b", [branch: "0.12.x"]},
 }
