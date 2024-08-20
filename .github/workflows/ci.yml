@@ -18,16 +18,13 @@ jobs:
           - pair:
               elixir: "1.14"
               otp: "25.3"
-              zig: "0.12.0"
           - pair:
               elixir: "1.17"
               otp: "27.0"
-              zig: "0.12.0"
     steps:
       - uses: actions/checkout@v4
       - name: Generate .tool-versions file
         run: |
-          echo "zig ${{ matrix.pair.zig }}" >> .tool-versions
           echo "elixir ${{ matrix.pair.elixir }}" >> .tool-versions
           echo "erlang ${{ matrix.pair.otp }}" >> .tool-versions
           cp .tool-versions ~/.
@@ -36,6 +33,7 @@ jobs:
       - name: Install Hex package manager
         run: mix local.hex --force && mix local.rebar --force
       - run: mix deps.get
+      - run: mix zig.get
       - uses: actions/cache@v4
         with:
           path: |
@@ -71,11 +69,7 @@ jobs:
       - name: Setup Kerberos environment and initialize configuration
         run: sudo ./test/support/files/setup_kerberos.sh
 
-      - uses: goto-bus-stop/setup-zig@v2
-        with:
-          version: 0.12.0
-
-      - uses: erlef/setup-beam@main
+      - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{matrix.pair.otp}}
           elixir-version: ${{matrix.pair.elixir}}
@@ -87,6 +81,7 @@ jobs:
           key: mix-deps-${{ hashFiles('**/mix.lock') }}
 
       - run: mix deps.get
+      - run: mix zig.get
 
       - run: mix format --check-formatted
         if: ${{ matrix.lint }}
