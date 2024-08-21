@@ -1,7 +1,7 @@
 defmodule ExCurl.MixProject do
   use Mix.Project
 
-  @source_url "https://github.com/open-status/ex_curl"
+  @source_url "https://github.com/danielrudn/ex_curl"
 
   def project do
     [

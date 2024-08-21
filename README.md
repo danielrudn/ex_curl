@@ -1,4 +1,4 @@
-# ExCurl [![CI](https://github.com/open-status/ex_curl/actions/workflows/ci.yml/badge.svg)](https://github.com/open-status/ex_curl/actions/workflows/ci.yml) [![Hex.pm](https://img.shields.io/hexpm/v/ex_curl.svg)](https://hex.pm/packages/ex_curl) [![Hexdocs.pm](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/ex_curl/)
+# ExCurl [![CI](https://github.com/danielrudn/ex_curl/actions/workflows/ci.yml/badge.svg)](https://github.com/danielrudn/ex_curl/actions/workflows/ci.yml) [![Hex.pm](https://img.shields.io/hexpm/v/ex_curl.svg)](https://hex.pm/packages/ex_curl) [![Hexdocs.pm](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/ex_curl/)
 
 Elixir bindings for libcurl using Zig's C interoperability.
 
