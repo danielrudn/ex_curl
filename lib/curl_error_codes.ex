@@ -1,6 +1,6 @@
 defmodule ExCurl.CurlErrorCodes do
   @moduledoc """
-  Helper functions to map [curl error codes](https://curl.se/libcurl/c/libcurl-errors.html) from their integer value to the string value and vice versa.
+  Helper functions to map [libcurl error codes](https://curl.se/libcurl/c/libcurl-errors.html) from their integer value to the string value and vice versa.
   """
 
   @all_error_codes [
