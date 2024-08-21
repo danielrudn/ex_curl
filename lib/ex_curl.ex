@@ -4,7 +4,7 @@ defmodule ExCurl do
 
   ## Shared options
 
-    * `:headers` - a map of headers to include in the request, defaults to `%{"user-agent" => "curl/7.85.0"}`
+    * `:headers` - a map of headers to include in the request, defaults to `%{"user-agent" => "ex_curl/0.3.0"}`
     * `:body` - a string to send as the request body, defaults to `""`
     * `:follow_location` - if redirects should be followed, defaults to `true`
     * `:ssl_verifyhost` - if SSL certificates should be verified, defaults to `true`
@@ -16,7 +16,7 @@ defmodule ExCurl do
 
   ## Error messages
 
-  Error messages refer to error codes on the [curl error codes documentation page](https://curl.se/libcurl/c/libcurl-errors.html).
+  Error messages refer to error codes on the [libcurl error codes documentation page](https://curl.se/libcurl/c/libcurl-errors.html).
 
   For example, when we try to send a request to an invalid url:
 
@@ -25,7 +25,7 @@ defmodule ExCurl do
         {:error, "URL_MALFORMAT"}
 
   The returned error tuple includes the error message `"URL_MALFORMAT"`. This corresponds to the `CURLE_URL_MALFORMAT` (error code 3) error listed
-  in the [curl error codes documentation](https://curl.se/libcurl/c/libcurl-errors.html).
+  in the [libcurl error codes documentation](https://curl.se/libcurl/c/libcurl-errors.html).
   """
 
   alias ExCurl.{CurlErrorCodes, Request, RequestConfiguration, Response}
@@ -166,7 +166,7 @@ defmodule ExCurl do
   ## Examples
 
 
-      iex> ExCurl.delete("https://httpbin.org/delete", headers: %{"authentication" => "bearer secret"})
+      iex> ExCurl.delete("https://httpbin.org/delete", headers: %{"Authorization" => "bearer secret"})
   """
   def delete(url, opts \\ []), do: request("DELETE", url, opts)
 
@@ -189,7 +189,7 @@ defmodule ExCurl do
     |> do_request(opts)
     |> case do
       {:ok, resp} ->
-        {:ok, Response.from_keyword_list_response(resp)}
+        {:ok, Response.parse(resp)}
 
       {:error, error_code} ->
         {:error, CurlErrorCodes.get_message(error_code)}

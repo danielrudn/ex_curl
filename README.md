@@ -30,7 +30,7 @@ ExCurl.get("https://httpbin.org/get")
 
 # view request metrics
 ExCurl.get!("https://httpbin.org/get", return_metrics: true)
-# => %ExCurl.Response{status_code: 200, total_time: 0.2, namelookup_time: 0.01, appconnect_time: 0.05, ...}}
+# => %ExCurl.Response{status_code: 200, metrics: %ExCurl.ResponseMetrics{total_time: 0.2, ...}, ...}}
 
 # submit a form
 ExCurl.post("https://httpbin.org/post", body: "text=#{URI.encode_www_form("some value")}")

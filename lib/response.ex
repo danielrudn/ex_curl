@@ -4,47 +4,34 @@ defmodule ExCurl.Response do
 
   ## Metrics
 
-  When the `metrics_returned` field is set to `true`, the following metrics will be included:
+  When the `return_metrics` option is set to `true` for a request, the `metrics` field will be populated with a [`%ExCurl.ResponseMetrics{}`](https://hexdocs.pm/ex_curl/ExCurl.ResponseMetrics.html) value.
 
-    * `total_time` - corresponds to the [CURLINFO_TOTAL_TIME_T option](https://curl.se/libcurl/c/CURLINFO_TOTAL_TIME_T.html).
-    * `namelookup_time` - corresponds to the [CURLINFO_NAMELOOKUP_TIME_T option](https://curl.se/libcurl/c/CURLINFO_NAMELOOKUP_TIME_T.html).
-    * `connect_time` - corresponds to the [CURLINFO_CONNECT_TIME_T option](https://curl.se/libcurl/c/CURLINFO_CONNECT_TIME_T.html).
-    * `appconnect_time` - corresponds to the [CURLINFO_APPCONNECT_TIME_T option](https://curl.se/libcurl/c/CURLINFO_APPCONNECT_TIME_T.html).
-    * `pretransfer_time` - corresponds to the [CURLINFO_PRETRANSFER_TIME_T option](https://curl.se/libcurl/c/CURLINFO_PRETRANSFER_TIME_T.html).
-    * `starttransfer_time` - corresponds to the [CURLINFO_STARTTRANSFER_TIME_T option](https://curl.se/libcurl/c/CURLINFO_STARTTRANSFER_TIME_T.html).
+  For example:
+
+        iex> ExCurl.get!("https://httpbin.org/get", return_metrics: true)
+        %ExCurl.Response{status_code: 200, metrics: %ExCurl.ResponseMetrics{}, ...}
 
   """
   defstruct body: "",
             headers: %{},
             status_code: 200,
-            total_time: 0,
-            namelookup_time: 0,
-            connect_time: 0,
-            appconnect_time: 0,
-            pretransfer_time: 0,
-            starttransfer_time: 0,
-            metrics_returned: false
+            metrics: nil
 
   @type t :: %__MODULE__{
           body: nil | String.t(),
           headers: map(),
           status_code: integer(),
-          total_time: float(),
-          namelookup_time: float(),
-          connect_time: float(),
-          appconnect_time: float(),
-          pretransfer_time: float(),
-          starttransfer_time: float(),
-          metrics_returned: bool()
+          metrics: nil | ExCurl.ResponseMetrics.t()
         }
 
   @doc false
-  def from_keyword_list_response(list) do
-    response = struct(__MODULE__, list)
+  def parse(raw) do
+    response = struct(__MODULE__, raw)
 
     %__MODULE__{
       response
-      | headers: header_string_to_map(response.headers)
+      | headers: header_string_to_map(response.headers),
+        metrics: parse_metrics(response.metrics)
     }
   end
 
@@ -57,4 +44,8 @@ defmodule ExCurl.Response do
     |> Stream.map(fn [key, value] -> {key, value} end)
     |> Enum.into(%{})
   end
+
+  defp parse_metrics(nil), do: nil
+
+  defp parse_metrics(metrics) when is_map(metrics), do: struct(ExCurl.ResponseMetrics, metrics)
 end

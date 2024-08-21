@@ -34,6 +34,22 @@ defmodule ExCurl.Request do
     flags: RequestFlags,
   };
 
+  pub const ResponseMetrics = struct {
+    namelookup_time: f64,
+    connect_time: f64,
+    appconnect_time: f64,
+    pretransfer_time: f64,
+    starttransfer_time: f64,
+    total_time: f64,
+  };
+
+  pub const Response = struct {
+    body: []u8,
+    status_code: u64,
+    headers: []u8,
+    metrics: ?ResponseMetrics,
+  };
+
   pub fn request_dirty_cpu(config: RequestConfiguration) !beam.term {
     return request(config);
   }
@@ -98,74 +114,56 @@ defmodule ExCurl.Request do
       return beam.make_error_pair(result, .{});
 
     // 4. getinfo and create response
-    const response_list = try makeKeywordListResponse(handle, response_buffer, headers_buffer, config);
-    const ok = beam.make_into_atom("ok", .{});
-    return beam.make(.{ok, response_list}, .{});
+    const response = try makeResponse(handle, response_buffer, headers_buffer, config);
+    return beam.make(.{.ok, response}, .{});
   }
 
-  fn makeKeywordListResponse(handle: *cURL.CURL, response_buffer: std.ArrayList(u8), headers_buffer: std.ArrayList(u8), config: RequestConfiguration) !beam.term {
-    // metrics
+  fn makeResponse(handle: *cURL.CURL, response_buffer: std.ArrayList(u8), headers_buffer: std.ArrayList(u8), config: RequestConfiguration) !Response {
+    var status_code: u64 = 0;
+    if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_RESPONSE_CODE, &status_code) != cURL.CURLE_OK)
+      return error.CURLGETINFO_FAILED;
+
+    return .{
+      .body = response_buffer.items,
+      .status_code = status_code,
+      .headers = headers_buffer.items,
+      .metrics = if (config.flags.return_metrics) try makeResponseMetrics(handle) else null,
+    };
+  }
+
+  fn makeResponseMetrics(handle: *cURL.CURL) !ResponseMetrics {
     var total_time: f64 = 0;
     if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_TOTAL_TIME_T, &total_time) != cURL.CURLE_OK)
       return error.CURLGETINFO_FAILED;
-    const total_time_tuple = beam.make(.{.total_time, total_time}, .{});
 
     var namelookup_time: f64 = 0;
     if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_NAMELOOKUP_TIME_T, &namelookup_time) != cURL.CURLE_OK)
       return error.CURLGETINFO_FAILED;
-    const name_lookup_tuple = beam.make(.{.namelookup_time, namelookup_time}, .{});
 
     var connect_time: f64 = 0;
     if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_CONNECT_TIME_T, &connect_time) != cURL.CURLE_OK)
       return error.CURLGETINFO_FAILED;
-    const connect_time_tuple = beam.make(.{.connect_time, connect_time}, .{});
 
     var appconnect_time: f64 = 0;
     if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_APPCONNECT_TIME_T, &appconnect_time) != cURL.CURLE_OK)
       return error.CURLGETINFO_FAILED;
-    const appconnect_time_tuple = beam.make(.{.appconnect_time, appconnect_time}, .{});
 
     var pretransfer_time: f64 = 0;
     if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_PRETRANSFER_TIME_T, &pretransfer_time) != cURL.CURLE_OK)
       return error.CURLGETINFO_FAILED;
-    const pretransfer_time_tuple = beam.make(.{.pretransfer_time, pretransfer_time}, .{});
 
     var starttransfer_time: f64 = 0;
     if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_STARTTRANSFER_TIME_T, &starttransfer_time) != cURL.CURLE_OK)
       return error.CURLGETINFO_FAILED;
-    const starttransfer_time_tuple = beam.make(.{.starttransfer_time, starttransfer_time}, .{});
 
-    var status_code: u64 = 0;
-    if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_RESPONSE_CODE, &status_code) != cURL.CURLE_OK)
-      return error.CURLGETINFO_FAILED;
-    const status_code_tuple = beam.make(.{.status_code, status_code}, .{});
-
-    const response_body_tuple = beam.make(.{.body, response_buffer.items}, .{});
-    const headers_tuple = beam.make(.{.headers, headers_buffer.items}, .{});
-
-    // response list
-    var response_tuple_slice: []beam.term = undefined;
-    if (config.flags.return_metrics) {
-      response_tuple_slice = try beam.allocator.alloc(beam.term, 10);
-      response_tuple_slice[0] = response_body_tuple;
-      response_tuple_slice[1] = total_time_tuple;
-      response_tuple_slice[2] = name_lookup_tuple;
-      response_tuple_slice[3] = connect_time_tuple;
-      response_tuple_slice[4] = appconnect_time_tuple;
-      response_tuple_slice[5] = pretransfer_time_tuple;
-      response_tuple_slice[6] = starttransfer_time_tuple;
-      response_tuple_slice[7] = status_code_tuple;
-      response_tuple_slice[8] = beam.make(.{.metrics_returned, true}, .{});
-      response_tuple_slice[9] = headers_tuple;
-    } else {
-      response_tuple_slice = try beam.allocator.alloc(beam.term, 3);
-      response_tuple_slice[0] = response_body_tuple;
-      response_tuple_slice[1] = status_code_tuple;
-      response_tuple_slice[2] = headers_tuple;
-    }
-    defer beam.allocator.free(response_tuple_slice);
-
-    return beam.make(response_tuple_slice, .{});
+    return .{
+      .namelookup_time = namelookup_time,
+      .connect_time = connect_time,
+      .appconnect_time = appconnect_time,
+      .pretransfer_time = pretransfer_time,
+      .starttransfer_time = starttransfer_time,
+      .total_time = total_time,
+    };
   }
 
   fn setCurlOpts(allocator: std.mem.Allocator, handle: *cURL.CURL, config: RequestConfiguration) !void {
