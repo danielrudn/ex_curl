@@ -66,14 +66,14 @@ defmodule ExCurlTest do
     {:ok, %ExCurl.Response{} = resp} =
       ExCurl.TestClient.get("http://localhost:#{bypass.port}/test", return_metrics: true)
 
-    assert resp.metrics_returned
-    assert resp.total_time != 0
-    assert resp.namelookup_time != 0
-    assert resp.connect_time != 0
+    assert resp.metrics != nil
+    assert resp.metrics.total_time != 0
+    assert resp.metrics.namelookup_time != 0
+    assert resp.metrics.connect_time != 0
     # appconnect is 0 when not using SSL
-    assert resp.appconnect_time == 0
-    assert resp.pretransfer_time != 0
-    assert resp.starttransfer_time != 0
+    assert resp.metrics.appconnect_time == 0
+    assert resp.metrics.pretransfer_time != 0
+    assert resp.metrics.starttransfer_time != 0
   end
 
   test "follows redirects by default", %{bypass: bypass} do

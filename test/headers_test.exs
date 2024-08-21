@@ -26,7 +26,7 @@ defmodule ExCurl.HeadersTest do
   test "sends default User-Agent header", %{bypass: bypass} do
     Bypass.expect(bypass, "GET", "/test", fn conn ->
       case Plug.Conn.get_req_header(conn, "user-agent") do
-        [val] when is_binary(val) -> Plug.Conn.send_resp(conn, 200, "OK")
+        ["ex_curl/" <> _rest] -> Plug.Conn.send_resp(conn, 200, "OK")
         _ -> Plug.Conn.send_resp(conn, 400, "Missing header")
       end
     end)

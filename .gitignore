@@ -24,3 +24,9 @@ ex_curl-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+lib/.Elixir.*.zig
+
+# devenv
+.devenv*
+devenv.local.nix

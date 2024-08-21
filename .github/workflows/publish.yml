@@ -1,0 +1,30 @@
+name: Publish
+
+on:
+  push:
+    branches: [master]
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    name: Publish
+    env:
+      HEX_API_KEY: ${{secrets.HEX_API_KEY}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "27.0"
+          elixir-version: "1.17"
+      - uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.13.0
+      - run: mix deps.get
+      - name: Publish Documentation
+        run: mix hex.publish docs --yes
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      - name: Publish Package
+        run: mix hex.publish --yes
+        if: github.event_name == 'release' && github.event.action == 'published'

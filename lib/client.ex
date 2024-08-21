@@ -9,7 +9,7 @@ defmodule ExCurl.Client do
 
   ```elixir
   defmodule GitHubClient do
-    use ExCurl.Client, defaults: [base_url: "https://api.github.com", headers: %{"authentication" => "Bearer some-secret-token"}]
+    use ExCurl.Client, defaults: [base_url: "https://api.github.com", headers: %{"Authorization" => "Bearer some-secret-token"}]
 
     def user_repos(username), do: get("/users/\#{username}/repos")
   end
@@ -33,7 +33,7 @@ defmodule ExCurl.Client do
 
   ```elixir
   defmodule GitHubClient do
-    use ExCurl.Client, defaults: [base_url: "https://api.github.com", headers: %{"authentication" => "Bearer some-secret-token"}]
+    use ExCurl.Client, defaults: [base_url: "https://api.github.com", headers: %{"Authorization" => "Bearer some-secret-token"}]
 
     def handle_response(%ExCurl.Response{body: body}) do
       case Jason.decode(body) do

@@ -1,4 +1,4 @@
-# ExCurl [![CI](https://github.com/open-status/ex_curl/actions/workflows/ci.yml/badge.svg)](https://github.com/open-status/ex_curl/actions/workflows/ci.yml) [![Hex.pm](https://img.shields.io/hexpm/v/ex_curl.svg)](https://hex.pm/packages/ex_curl) [![Hexdocs.pm](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/ex_curl/)
+# ExCurl [![CI](https://github.com/danielrudn/ex_curl/actions/workflows/ci.yml/badge.svg)](https://github.com/danielrudn/ex_curl/actions/workflows/ci.yml) [![Hex.pm](https://img.shields.io/hexpm/v/ex_curl.svg)](https://hex.pm/packages/ex_curl) [![Hexdocs.pm](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/ex_curl/)
 
 Elixir bindings for libcurl using Zig's C interoperability.
 
@@ -9,7 +9,7 @@ The package can be installed by adding `ex_curl` to your list of dependencies in
 ```elixir
 def deps do
   [
-    {:ex_curl, "~> 0.2.1"}
+    {:ex_curl, "~> 0.3.0"}
   ]
 end
 ```
@@ -18,7 +18,7 @@ To install `ex_curl` in a Livebook, you can use `Mix.install/2`:
 
 ```elixir
 Mix.install([
-  {:ex_curl, "~> 0.2.1"}
+  {:ex_curl, "~> 0.3.0"}
 ])
 ```
 
@@ -30,7 +30,7 @@ ExCurl.get("https://httpbin.org/get")
 
 # view request metrics
 ExCurl.get!("https://httpbin.org/get", return_metrics: true)
-# => %ExCurl.Response{status_code: 200, total_time: 0.2, namelookup_time: 0.01, appconnect_time: 0.05, ...}}
+# => %ExCurl.Response{status_code: 200, metrics: %ExCurl.ResponseMetrics{total_time: 0.2, ...}, ...}}
 
 # submit a form
 ExCurl.post("https://httpbin.org/post", body: "text=#{URI.encode_www_form("some value")}")

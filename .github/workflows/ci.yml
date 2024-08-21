@@ -5,24 +5,65 @@ on:
     branches:
       - master
 
+env:
+  MIX_ENV: test
+
 jobs:
-  ci:
-    runs-on: ubuntu-20.04
-    env:
-      MIX_ENV: test
+  ci-macos:
+    runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
         include:
           - pair:
-              elixir: "1.11.4"
-              otp: "23.0"
+              elixir: "1.14"
+              otp: "25.3"
+              zig: "0.13.0"
+          - pair:
+              elixir: "1.17"
+              otp: "27.0"
+              zig: "0.13.0"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate .tool-versions file
+        run: |
+          echo "zig ${{ matrix.pair.zig }}" >> .tool-versions
+          echo "elixir ${{ matrix.pair.elixir }}" >> .tool-versions
+          echo "erlang ${{ matrix.pair.otp }}" >> .tool-versions
+          cp .tool-versions ~/.
+          cat .tool-versions
+      - uses: asdf-vm/actions/install@v3
+      - name: Install Hex package manager
+        run: mix local.hex --force && mix local.rebar --force
+      - run: mix deps.get
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.asdf
+            deps
+          key: mix-deps-${{ hashFiles('**/mix.lock') }}-${{ matrix.pair.elixir }}-${{ matrix.pair.otp }}
+      - run: mix test
+  ci-ubuntu:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
           - pair:
               elixir: "1.14"
-              otp: "25.0"
+              otp: "25.3"
+          - pair:
+              elixir: "1.15"
+              otp: "26.2"
+          - pair:
+              elixir: "1.16"
+              otp: "26.2"
+          - pair:
+              elixir: "1.17"
+              otp: "27.0"
             lint: lint
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Install test dependencies
         run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev krb5-{user,kdc,admin-server}
@@ -30,13 +71,17 @@ jobs:
       - name: Setup Kerberos environment and initialize configuration
         run: sudo ./test/support/files/setup_kerberos.sh
 
-      - uses: erlef/setup-beam@main
+      - uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.13.0
+
+      - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{matrix.pair.otp}}
           elixir-version: ${{matrix.pair.elixir}}
           version-type: strict
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         with:
           path: deps
           key: mix-deps-${{ hashFiles('**/mix.lock') }}

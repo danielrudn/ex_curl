@@ -1,13 +1,13 @@
 defmodule ExCurl.MixProject do
   use Mix.Project
 
-  @source_url "https://github.com/open-status/ex_curl"
+  @source_url "https://github.com/danielrudn/ex_curl"
 
   def project do
     [
       app: :ex_curl,
-      version: "0.2.1",
-      elixir: "~> 1.11",
+      version: "0.3.0",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -29,10 +29,9 @@ defmodule ExCurl.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ex_doc, "0.29.0"},
-      {:zigler, "~> 0.9.1", runtime: false},
-      {:jason, ">= 1.0.0"},
-      {:bypass, "~> 2.0", only: :test}
+      {:ex_doc, "~> 0.34", only: :dev, runtime: false},
+      {:bypass, "~> 2.0", only: :test},
+      {:zigler, "~> 0.13", runtime: false}
     ]
   end
 
