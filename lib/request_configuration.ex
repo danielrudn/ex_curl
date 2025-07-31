@@ -1,7 +1,6 @@
 defmodule ExCurl.RequestConfiguration do
   @moduledoc false
 
-  @derive {Jason.Encoder, only: [:headers, :url, :method, :body, :flags]}
   defstruct headers: %{}, url: "", method: "", body: "", flags: %{}
 
   def build(method, url, opts \\ []) do
