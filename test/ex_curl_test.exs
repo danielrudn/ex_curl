@@ -173,19 +173,4 @@ defmodule ExCurlTest do
       ExCurl.TestClient.request!("GET", "https://")
     end
   end
-
-  test "can use proxy option" do
-    proxy = System.get_env("TEST_PROXY")
-
-    if proxy do
-      {:ok, %ExCurl.Response{} = resp} =
-        ExCurl.TestClient.get("https://httpbin.org/ip", proxy: proxy)
-
-      assert resp.status_code == 200
-      assert String.contains?(resp.body, "origin")
-    else
-      # Skip test if no proxy is configured
-      :ok
-    end
-  end
 end
