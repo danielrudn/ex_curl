@@ -18,6 +18,6 @@ defmodule ExCurl.ProxyTest do
 
   test "fails when proxy is not running or reachable" do
     assert {:error, "COULDNT_RESOLVE_PROXY"} =
-             ExCurl.TestClient.get("https://httpbin.org/get", proxy: "invalidhost")
+             ExCurl.TestClient.get("https://httpbin.org/get", proxy: "nonexistent-host")
   end
 end
