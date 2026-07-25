@@ -1,7 +1,6 @@
 defmodule ExCurl.RequestConfiguration do
   @moduledoc false
 
-  @derive {Jason.Encoder, only: [:headers, :url, :method, :body, :flags]}
   defstruct headers: %{}, url: "", method: "", body: "", flags: %{}
 
   def build(method, url, opts \\ []) do
@@ -16,7 +15,8 @@ defmodule ExCurl.RequestConfiguration do
         ssl_verifypeer: Keyword.get(opts, :ssl_verifypeer, true),
         return_metrics: Keyword.get(opts, :return_metrics, false),
         verbose: Keyword.get(opts, :verbose, false),
-        http_auth_negotiate: Keyword.get(opts, :http_auth_negotiate, false)
+        http_auth_negotiate: Keyword.get(opts, :http_auth_negotiate, false),
+        proxy: Keyword.get(opts, :proxy, nil)
       }
     }
   end

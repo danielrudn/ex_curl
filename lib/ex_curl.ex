@@ -13,6 +13,7 @@ defmodule ExCurl do
     * `:verbose` - if curl should output verbose logs to stdout, useful for debugging. Defaults to `false`
     * `:http_auth_negotiate` - if curl should use HTTP Negotiation (SPNEGO) as defined in [RFC 4559](https://datatracker.ietf.org/doc/html/rfc4559).
       Note: this flag requires curl to be compiled with a suitable GSS-API or SSPI library. Defaults to `false`
+    * `:proxy` - proxy to use for transfers. Can be hostname or IP address with optional port number. Supports various proxy types (http, https, socks4, socks5). Defaults to `nil`
 
   ## Error messages
 

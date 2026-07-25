@@ -29,6 +29,7 @@ defmodule ExCurl.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:jason, "~> 1.4"},
       {:ex_doc, "~> 0.34", only: :dev, runtime: false},
       {:bypass, "~> 2.0", only: :test},
       {:zigler, "~> 0.13", runtime: false}

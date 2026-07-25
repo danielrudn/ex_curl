@@ -21,6 +21,7 @@ defmodule ExCurl.Request do
       return_metrics: bool,
       verbose: bool,
       http_auth_negotiate: bool,
+      proxy: ?[]u8,
   };
 
   pub const RequestConfiguration = struct {
@@ -215,6 +216,14 @@ defmodule ExCurl.Request do
       defer allocator.free(url_as_c_string);
       if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_URL, url_as_c_string.ptr) != cURL.CURLE_OK)
           unreachable;
+
+      // Proxy
+      if (config.flags.proxy) |proxy| {
+          const proxy_as_c_string = allocator.dupeZ(u8, proxy) catch unreachable;
+          defer allocator.free(proxy_as_c_string);
+          if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_PROXY, proxy_as_c_string.ptr) != cURL.CURLE_OK)
+              unreachable;
+      }
   }
 
   fn readFn(dest: [*c]u8, size: usize, nmemb: usize, config: *RequestConfiguration) callconv(.C) usize {

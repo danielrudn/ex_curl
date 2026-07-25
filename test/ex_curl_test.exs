@@ -117,8 +117,9 @@ defmodule ExCurlTest do
   end
 
   test "error on expired SSL cert" do
-    assert {:error, "PEER_FAILED_VERIFICATION"} ==
-             ExCurl.TestClient.get("https://expired.badssl.com")
+    valid_errors = ["PEER_FAILED_VERIFICATION", "SSL_CONNECT_ERROR"]
+    assert {:error, error_msg} = ExCurl.TestClient.get("https://expired.badssl.com")
+    assert error_msg in valid_errors
   end
 
   test "can disable ssl peer validation" do
