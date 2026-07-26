@@ -4,7 +4,7 @@ defmodule ExCurl do
 
   ## Shared options
 
-    * `:headers` - a map of headers to include in the request, defaults to `%{"user-agent" => "ex_curl/0.3.0"}`
+    * `:headers` - a map of headers to include in the request, defaults to `%{"user-agent" => "ex_curl/0.4.0"}`
     * `:body` - a string to send as the request body, defaults to `""`
     * `:follow_location` - if redirects should be followed, defaults to `true`
     * `:ssl_verifyhost` - if SSL certificates should be verified, defaults to `true`
