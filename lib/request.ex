@@ -160,30 +160,17 @@ defmodule ExCurl.Request do
       };
   }
 
+  const bool_flag_opts = .{
+      .{ "verbose", cURL.CURLOPT_VERBOSE },
+      .{ "follow_location", cURL.CURLOPT_FOLLOWLOCATION },
+      .{ "ssl_verifypeer", cURL.CURLOPT_SSL_VERIFYPEER },
+      .{ "ssl_verifyhost", cURL.CURLOPT_SSL_VERIFYHOST },
+  };
+
   fn setCurlOpts(allocator: std.mem.Allocator, handle: *cURL.CURL, config: RequestConfiguration) !void {
-      if (config.flags.verbose) {
-          if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_VERBOSE, @as(c_long, 1)) != cURL.CURLE_OK)
-              unreachable;
-      }
-
-      if (config.flags.follow_location) {
-          if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_FOLLOWLOCATION, @as(c_long, 1)) != cURL.CURLE_OK)
-              unreachable;
-      }
-
-      if (config.flags.ssl_verifypeer) {
-          if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_SSL_VERIFYPEER, @as(c_long, 1)) != cURL.CURLE_OK)
-              unreachable;
-      } else {
-          if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_SSL_VERIFYPEER, @as(c_long, 0)) != cURL.CURLE_OK)
-              unreachable;
-      }
-
-      if (config.flags.ssl_verifyhost) {
-          if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_SSL_VERIFYHOST, @as(c_long, 1)) != cURL.CURLE_OK)
-              unreachable;
-      } else {
-          if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_SSL_VERIFYHOST, @as(c_long, 0)) != cURL.CURLE_OK)
+      inline for (bool_flag_opts) |flag| {
+          const value: c_long = if (@field(config.flags, flag[0])) 1 else 0;
+          if (cURL.curl_easy_setopt(handle, flag[1], value) != cURL.CURLE_OK)
               unreachable;
       }
 
@@ -203,25 +190,21 @@ defmodule ExCurl.Request do
           if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_POSTFIELDSIZE, @as(c_long, @intCast(config.body.len))) != cURL.CURLE_OK)
               unreachable;
       } else if (!std.mem.eql(u8, config.method, "GET")) {
-          const method_as_c_string = allocator.dupeZ(u8, config.method) catch unreachable;
-          defer allocator.free(method_as_c_string);
-          if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_CUSTOMREQUEST, method_as_c_string.ptr) != cURL.CURLE_OK)
-              unreachable;
+          setStringOpt(allocator, handle, cURL.CURLOPT_CUSTOMREQUEST, config.method);
       }
 
-      // URL
-      const url_as_c_string = allocator.dupeZ(u8, config.url) catch unreachable;
-      defer allocator.free(url_as_c_string);
-      if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_URL, url_as_c_string.ptr) != cURL.CURLE_OK)
-          unreachable;
+      setStringOpt(allocator, handle, cURL.CURLOPT_URL, config.url);
 
-      // Proxy
       if (config.flags.proxy) |proxy| {
-          const proxy_as_c_string = allocator.dupeZ(u8, proxy) catch unreachable;
-          defer allocator.free(proxy_as_c_string);
-          if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_PROXY, proxy_as_c_string.ptr) != cURL.CURLE_OK)
-              unreachable;
+          setStringOpt(allocator, handle, cURL.CURLOPT_PROXY, proxy);
       }
+  }
+
+  fn setStringOpt(allocator: std.mem.Allocator, handle: *cURL.CURL, opt: cURL.CURLoption, value: []const u8) void {
+      const c_string = allocator.dupeZ(u8, value) catch unreachable;
+      defer allocator.free(c_string);
+      if (cURL.curl_easy_setopt(handle, opt, c_string.ptr) != cURL.CURLE_OK)
+          unreachable;
   }
 
   fn readFn(dest: [*c]u8, size: usize, nmemb: usize, config: *RequestConfiguration) callconv(.c) usize {
