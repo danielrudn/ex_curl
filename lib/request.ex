@@ -62,8 +62,8 @@ defmodule ExCurl.Request do
       const handle = cURL.curl_easy_init() orelse return beam.make_error_pair("init_failed", .{});
       defer cURL.curl_easy_cleanup(handle);
 
-      var response_buffer = std.ArrayList(u8).init(allocator);
-      var headers_buffer = std.ArrayList(u8).init(allocator);
+      var response_buffer = std.array_list.Managed(u8).init(allocator);
+      var headers_buffer = std.array_list.Managed(u8).init(allocator);
 
       // superfluous when using an arena allocator, but
       // important if the allocator implementation changes
@@ -116,7 +116,7 @@ defmodule ExCurl.Request do
       return beam.make(.{ .ok, response }, .{});
   }
 
-  fn makeResponse(handle: *cURL.CURL, response_buffer: std.ArrayList(u8), headers_buffer: std.ArrayList(u8), config: RequestConfiguration) !Response {
+  fn makeResponse(handle: *cURL.CURL, response_buffer: std.array_list.Managed(u8), headers_buffer: std.array_list.Managed(u8), config: RequestConfiguration) !Response {
       var status_code: u64 = 0;
       if (cURL.curl_easy_getinfo(handle, cURL.CURLINFO_RESPONSE_CODE, &status_code) != cURL.CURLE_OK)
           return error.CURLGETINFO_FAILED;
@@ -228,7 +228,7 @@ defmodule ExCurl.Request do
       }
   }
 
-  fn readFn(dest: [*c]u8, size: usize, nmemb: usize, config: *RequestConfiguration) callconv(.C) usize {
+  fn readFn(dest: [*c]u8, size: usize, nmemb: usize, config: *RequestConfiguration) callconv(.c) usize {
       const bufferSize = size * nmemb;
 
       if (config.body.len == 0) {
@@ -241,8 +241,8 @@ defmodule ExCurl.Request do
       return n;
   }
 
-  fn writeToArrayListCallback(data: *anyopaque, size: c_uint, nmemb: c_uint, user_data: *anyopaque) callconv(.C) c_uint {
-      var buffer: *std.ArrayList(u8) = @alignCast(@ptrCast(user_data));
+  fn writeToArrayListCallback(data: *anyopaque, size: c_uint, nmemb: c_uint, user_data: *anyopaque) callconv(.c) c_uint {
+      var buffer: *std.array_list.Managed(u8) = @ptrCast(@alignCast(user_data));
       var typed_data: [*]u8 = @ptrCast(data);
       buffer.appendSlice(typed_data[0 .. nmemb * size]) catch return 0;
       return nmemb * size;
