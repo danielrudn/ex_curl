@@ -7,7 +7,7 @@ defmodule ExCurl.MixProject do
     [
       app: :ex_curl,
       version: "0.3.0",
-      elixir: "~> 1.14",
+      elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -30,9 +30,9 @@ defmodule ExCurl.MixProject do
   defp deps do
     [
       {:jason, "~> 1.4"},
-      {:ex_doc, "~> 0.34", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.39", runtime: false},
       {:bypass, "~> 2.0", only: :test},
-      {:zigler, "~> 0.13", runtime: false}
+      {:zigler, "~> 0.16", runtime: false}
     ]
   end
 

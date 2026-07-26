@@ -28,7 +28,7 @@ defmodule ExCurl.Response do
   def parse(raw) do
     response = struct(__MODULE__, raw)
 
-    %__MODULE__{
+    %{
       response
       | headers: header_string_to_map(response.headers),
         metrics: parse_metrics(response.metrics)
