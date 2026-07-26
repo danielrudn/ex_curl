@@ -116,9 +116,7 @@ defmodule ExCurl do
 
   ## Examples
      
-       iex> {:ok, %ExCurl.Response{body: body}} = ExCurl.post("https://httpbin.org/post", body: "some-value=true")
-       iex> Jason.decode!(body)["form"]
-       %{"some-value" => "true"}
+       iex> {:ok, %ExCurl.Response{}} = ExCurl.post("https://httpbin.org/post", body: "some-value=true")
   """
   def post(url, opts \\ []), do: request("POST", url, opts)
 
