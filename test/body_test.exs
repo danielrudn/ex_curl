@@ -21,6 +21,21 @@ defmodule ExCurl.BodyTest do
     assert resp.body == "OK"
   end
 
+  test "sends content-length 0 for POST requests without a body", %{bypass: bypass} do
+    Bypass.expect(bypass, "POST", "/test", fn conn ->
+      case Plug.Conn.get_req_header(conn, "content-length") do
+        ["0"] -> Plug.Conn.send_resp(conn, 200, "OK")
+        _ -> Plug.Conn.send_resp(conn, 400, "Unexpected content-length")
+      end
+    end)
+
+    {:ok, %ExCurl.Response{} = resp} =
+      ExCurl.TestClient.post("http://localhost:#{bypass.port}/test")
+
+    assert resp.status_code == 200
+    assert resp.body == "OK"
+  end
+
   test "does not send request body for GET requests", %{bypass: bypass} do
     Bypass.expect(bypass, "GET", "/test", fn conn ->
       case Plug.Conn.read_body(conn) do
