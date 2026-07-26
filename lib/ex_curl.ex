@@ -216,10 +216,7 @@ defmodule ExCurl do
     end
   end
 
-  defp do_request(%RequestConfiguration{} = config, opts) do
-    case Keyword.get(opts, :dirty_cpu, false) do
-      true -> Request.request_dirty_cpu(config)
-      _ -> Request.request(config)
-    end
+  defp do_request(%RequestConfiguration{} = config, _opts) do
+    Request.request(config)
   end
 end

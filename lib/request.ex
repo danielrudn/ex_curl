@@ -3,7 +3,7 @@ defmodule ExCurl.Request do
   use Zig,
     otp_app: :ex_curl,
     c: [link_lib: {:system, "curl"}],
-    nifs: [request: [], request_dirty_cpu: [:dirty_cpu]]
+    nifs: [request: [:dirty_io]]
 
   ~Z"""
   const beam = @import("beam");
@@ -47,10 +47,6 @@ defmodule ExCurl.Request do
       headers: []u8,
       metrics: ?ResponseMetrics,
   };
-
-  pub fn request_dirty_cpu(config: RequestConfiguration) !beam.term {
-      return request(config);
-  }
 
   pub fn request(config: RequestConfiguration) !beam.term {
       // initialize curl and vars

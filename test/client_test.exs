@@ -15,7 +15,7 @@ defmodule ExCurl.ClientTest do
     end)
 
     defmodule HeaderClient do
-      use ExCurl.Client, defaults: [headers: %{"test-header" => "true"}, dirty_cpu: true]
+      use ExCurl.Client, defaults: [headers: %{"test-header" => "true"}]
     end
 
     {:ok, %ExCurl.Response{} = resp} = HeaderClient.get("http://localhost:#{bypass.port}/test")
@@ -30,7 +30,7 @@ defmodule ExCurl.ClientTest do
 
     defmodule BaseURLClient do
       @port bypass.port
-      use ExCurl.Client, defaults: [base_url: "http://localhost:#{@port}", dirty_cpu: true]
+      use ExCurl.Client, defaults: [base_url: "http://localhost:#{@port}"]
     end
 
     {:ok, %ExCurl.Response{} = resp} = BaseURLClient.get("/test")
@@ -49,7 +49,7 @@ defmodule ExCurl.ClientTest do
     defmodule FunctionDefaultsClient do
       use ExCurl.Client, defaults: &get_defaults/0
 
-      defp get_defaults, do: [dirty_cpu: true, headers: %{"test-header" => "true"}]
+      defp get_defaults, do: [headers: %{"test-header" => "true"}]
     end
 
     {:ok, %ExCurl.Response{} = resp} =
@@ -70,7 +70,7 @@ defmodule ExCurl.ClientTest do
     defmodule AtomFunctionDefaultsClient do
       use ExCurl.Client, defaults: :get_defaults
 
-      def get_defaults, do: [dirty_cpu: true, headers: %{"test-header" => "true"}]
+      def get_defaults, do: [headers: %{"test-header" => "true"}]
     end
 
     {:ok, %ExCurl.Response{} = resp} =
@@ -86,7 +86,7 @@ defmodule ExCurl.ClientTest do
     end)
 
     defmodule HandleResponseClient do
-      use ExCurl.Client, defaults: [dirty_cpu: true]
+      use ExCurl.Client
 
       def handle_response(%ExCurl.Response{status_code: 200, body: "OK"}), do: "HANDLED"
     end
