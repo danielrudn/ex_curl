@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - master
+  schedule:
+    # Mondays 14:17 UTC (~9:17 EST / 10:17 EDT)
+    - cron: "17 14 * * 1"
+  workflow_dispatch:
 
 env:
   MIX_ENV: test
