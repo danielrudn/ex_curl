@@ -204,6 +204,8 @@ defmodule ExCurl.Request do
       if (std.mem.eql(u8, config.method, "POST")) {
           if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_POST, @as(c_long, 1)) != cURL.CURLE_OK)
               unreachable;
+          if (cURL.curl_easy_setopt(handle, cURL.CURLOPT_POSTFIELDSIZE, @as(c_long, @intCast(config.body.len))) != cURL.CURLE_OK)
+              unreachable;
       } else if (!std.mem.eql(u8, config.method, "GET")) {
           const method_as_c_string = allocator.dupeZ(u8, config.method) catch unreachable;
           defer allocator.free(method_as_c_string);
